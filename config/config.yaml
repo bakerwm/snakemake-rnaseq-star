@@ -7,18 +7,28 @@ units: config/units.tsv
 
 
 ref:
-  # Ensembl species name
-  species: homo_sapiens
+  # # Ensembl species name
+  # species: homo_sapiens
+  # # Ensembl release (make sure to take one where snpeff data is available, check 'snpEff databases' output)
+  # release: 100
+  # # Genome build
+  # build: GRCh38  
   # Ensembl release (make sure to take one where snpeff data is available, check 'snpEff databases' output)
+  # ## Human
+  # release: 100
+  # species: homo_sapiens
+  # build: GRCh38
+  ## Fruitfly
   release: 100
-  # Genome build
-  build: GRCh38
+  species: drosophila_melanogaster
+  build: BDGP6.28
+
 
 trimming:
   # If you activate trimming by setting this to `True`, you will have to
   # specify the respective cutadapt adapter trimming flag for each unit
   # in the `units.tsv` file's `adapters` column
-  activate: False
+  activate: True
 
 pca:
   activate: True

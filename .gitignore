@@ -8,3 +8,8 @@ logs/**
 resources/**
 results/**
 .snakemake/**
+.cache/**
+.conda/**
+.condarc
+fastq/**
+run.sh

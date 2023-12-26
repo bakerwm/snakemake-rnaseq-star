@@ -1,10 +1,12 @@
-
 import glob
+
 import pandas as pd
 from snakemake.remote import FTP
 from snakemake.utils import validate
 
 ftp = FTP.RemoteProvider()
+
+validate(config, schema="../schemas/config.schema.yaml")
 
 samples = (
     pd.read_csv(config["samples"], sep="\t", dtype={"sample_name": str})
@@ -12,8 +14,6 @@ samples = (
     .sort_index()
 )
 
-
-validate(config, schema="../schemas/config.schema.yaml")
 
 def get_final_output():
     final_output = expand(
