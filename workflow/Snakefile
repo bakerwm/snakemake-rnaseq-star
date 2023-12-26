@@ -6,22 +6,17 @@ min_version("7.32.0")
 ##### setup report #####
 configfile: "config/config.yaml"
 
-
 report: "report/workflow.rst"
 
-
 ##### setup singularity #####
-
-
 # this container defines the underlying OS for each job when using the workflow
 # with --use-conda --use-singularity
 container: "docker://continuumio/miniconda3"
 
 
 ##### load rules #####
-
-
 include: "rules/common.smk"
+include: "rules/design.smk"
 include: "rules/ref.smk"
 # include: "rules/trim.smk"
 # include: "rules/qc.smk"
@@ -29,9 +24,7 @@ include: "rules/ref.smk"
 # include: "rules/diffexp.smk"
 
 
-##### target rules #####
-
-
-rule all:
-    input:
-        get_final_output(),
+# ##### target rules #####
+# rule all:
+#     input:
+#         get_final_output(),

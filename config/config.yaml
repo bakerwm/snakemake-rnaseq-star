@@ -1,3 +1,11 @@
+# DESIGN
+## build a design, mut-vs-wt pairs
+## samples+units (samples=names; units=replicates)
+raw_fq_dir: fastq/raw_data
+
+
+
+
 # path or URL to sample sheet (TSV format, columns: sample, condition, ...)
 samples: config/samples.tsv
 # path or URL to sequencing unit sheet (TSV format, columns: sample, unit, fq1, fq2)
@@ -18,10 +26,14 @@ ref:
   # release: 100
   # species: homo_sapiens
   # build: GRCh38
-  ## Fruitfly
+  # ## Fruitfly
+  # release: 100
+  # species: drosophila_melanogaster
+  # build: BDGP6.28
+  ## Mouse
   release: 100
-  species: drosophila_melanogaster
-  build: BDGP6.28
+  species: mus_musculus
+  build: GRCm38
 
 
 trimming:

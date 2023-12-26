@@ -1,19 +1,11 @@
 
 import glob
+import yaml
 import pandas as pd
 from snakemake.remote import FTP
 from snakemake.utils import validate
 
 ftp = FTP.RemoteProvider()
-
-samples = (
-    pd.read_csv(config["samples"], sep="\t", dtype={"sample_name": str})
-    .set_index("sample_name", drop=False)
-    .sort_index()
-)
-
-
-validate(config, schema="../schemas/config.schema.yaml")
 
 def get_final_output():
     final_output = expand(
@@ -37,6 +29,18 @@ def get_final_output():
     return final_output
 
 
+# config
+validate(config, schema="../schemas/config.schema.yaml")
+
+# # design
+# design = yaml.safe_load("../config/design.yaml")
+# validate(design, schema="../schemas/design.schema.yaml")
+
+samples = (
+    pd.read_csv(config["samples"], sep="\t", dtype={"sample_name": str})
+    .set_index("sample_name", drop=False)
+    .sort_index()
+)
 validate(samples, schema="../schemas/samples.schema.yaml")
 
 units = (

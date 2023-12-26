@@ -1,0 +1,8 @@
+# design for RNAseq 
+# mut vs wt
+# choose unique keywords for each group
+wt: 
+  - dT1
+mut: 
+  - dT5
+fq_dir: fastq/raw_data

@@ -13,3 +13,4 @@ results/**
 .condarc
 fastq/**
 run.sh
+*.out

@@ -19,7 +19,7 @@
 REF_RELEASE = config["ref"]["release"]
 REF_BUILD = config["ref"]["build"] # genome build, for sub_dir of genome
 REF_SPECIES = config["ref"]["species"] # species name
-THREADS=24
+THREADS=8
 ## Wrappers from Github
 # WRAPPER_PATH = "v3.3.0" # wrappers from Github
 ## Wrappers from local machine, public directory, version 3.3.2, 2023-12-26

@@ -1,0 +1,18 @@
+$schema: "http://json-schema.org/draft-06/schema#"
+
+description: an entry in the RNAseq design
+properties:
+  wt:
+    type: list
+    description: list of unique keywords for wildtype samples
+  mut:
+    type: list
+    description: list of unique keywords for mutant samples
+  fq_dir:
+    type: string
+    description: path to the fastq files of the RNAseq 
+
+required:
+  - wt
+  - mut
+  - fq_dir
