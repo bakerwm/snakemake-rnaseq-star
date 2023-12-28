@@ -5,6 +5,12 @@ properties:
   sample_name:
     type: string
     description: sample name/identifier
+  group:
+    type: integer
+    description: group of wt-mut pair
+  treatment_1:
+    type: string
+    description: wt or mut for sample_name in each group
 
 required:
   - sample_name

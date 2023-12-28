@@ -14,15 +14,7 @@ properties:
   fq2:
     type: string
     description: path to second FASTQ file (leave empty in case of single-end)
-  sra:
-    type: string
-    description: SRA id for automatic download of unit
-  adapters:
-    type: string
-    description: adapter trimming settings to use (for cutadapt)
-  strandedness:
-    type: string
-    description: one of the values 'none', 'yes' or 'reverse' according to protocol strandedness
+
 
 required:
   - sample_name

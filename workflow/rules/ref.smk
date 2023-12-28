@@ -1,31 +1,75 @@
 # Prepare reference for RNAseq pipeline
 
-# ## Output files/directories in this snakemake
-# fasta: resources/{ref_build}/genome.fasta
-# gtf: resources/{ref_build}/genome.gtf
+## Output files/directories in this snakemake
+# fasta:         resources/{ref_build}/genome.fasta
+# gtf:           resources/{ref_build}/genome.gtf
 # bowtie2_index: resources/{ref_build}/genome.fasta
-# bwa_index: resources/{ref_build}/genome.fasta
-# star_index: resources/{ref_build}/star_genome
-# hisat2_index: resources/{ref_build}/genome
-# salmon_index: resources/{ref_build}/salmon_genome
-# decoys: resources/{ref_build}/genome.decoys.txt
-# cdna: resources/{ref_build}/genome.cdna.fasta
-# gentrome: resources/{ref_build}/genome.transcriptome.fasta
-# exons: resources/{ref_build}/genome.exons.bed
-# splice_sites: resources/{ref_build}/genome.splice_sites.bed
+# bwa_index:     resources/{ref_build}/genome.fasta
+# star_index:    resources/{ref_build}/star_genome
+# hisat2_index:  resources/{ref_build}/genome
+# salmon_index:  resources/{ref_build}/salmon_genome
+# decoys:        resources/{ref_build}/genome.decoys.txt
+# cdna:          resources/{ref_build}/genome.cdna.fasta
+# gentrome:      resources/{ref_build}/genome.transcriptome.fasta
+# exons:         resources/{ref_build}/genome.exons.bed
+# splice_sites:  resources/{ref_build}/genome.splice_sites.bed
 
-
+###############################################################################
 ## local variables
 REF_RELEASE = config["ref"]["release"]
-REF_BUILD = config["ref"]["build"] # genome build, for sub_dir of genome
-REF_SPECIES = config["ref"]["species"] # species name
-THREADS=8
+REF_BUILD = config["ref"]["build"]  # genome build, for sub_dir of genome
+REF_SPECIES = config["ref"]["species"]  # species name
+THREADS = 8
 ## Wrappers from Github
 # WRAPPER_PATH = "v3.3.0" # wrappers from Github
 ## Wrappers from local machine, public directory, version 3.3.2, 2023-12-26
 WRAPPER_PATH = "file:///data/biosoft/snakemake/snakemake-wrappers"
 
 
+###############################################################################
+# Choose ref data from config or build in this pipeline
+# required:
+# - fasta
+# - gtf
+# - star_index (!!! caution: STAR version conflic)
+# - salmon_index
+def get_ref_fasta():
+    cfg_fa = config["index"]["fasta"]
+    out = f"resources/{REF_BUILD}/genome.fasta"
+    if isinstance(cfg_fa, str):
+        if Path(cfg_fa).exists():
+            out = cfg_fa
+    return out
+
+
+def get_ref_gtf():
+    cfg_gtf = config["index"]["gtf"]
+    out = f"resources/{REF_BUILD}/genome.gtf"
+    if isinstance(cfg_gtf, str):
+        if Path(cfg_gtf).exists():
+            out = cfg_gtf
+    return out
+
+
+def get_ref_star_index():
+    cfg_star_index = config["index"]["star_index"]
+    out = f"resources/{REF_BUILD}/star_genome"
+    # STAR --runMode genomeLoad --genomeDir /path/to/your/genome/index
+    if isinstance(cfg_star_index, str):
+        out = cfg_star_index
+    return out
+
+
+def get_ref_salmon_index():
+    cfg_salmon_index = config["index"]["salmon_index"]
+    out = f"resources/{REF_BUILD}/salmon_genome"
+    if isinstance(cfg_salmon_index, str):
+        out = cfg_salmon_index
+    return out
+
+
+###############################################################################
+# Download and build reference fasta and index
 rule get_genome:
     output:
         f"resources/{REF_BUILD}/genome.fasta",
@@ -56,9 +100,10 @@ rule get_annotation:
     wrapper:
         f"{WRAPPER_PATH}/bio/reference/ensembl-annotation"
 
+
 rule get_transcriptome:
     output:
-        f"resources/{REF_BUILD}/genome.cdna.fasta"
+        f"resources/{REF_BUILD}/genome.cdna.fasta",
     params:
         species=REF_SPECIES,
         build=REF_BUILD,
@@ -66,7 +111,7 @@ rule get_transcriptome:
         datatype="cdna",
     cache: True
     log:
-        f"logs/genome/get_transcriptome.{REF_BUILD}.log"
+        f"logs/genome/get_transcriptome.{REF_BUILD}.log",
     wrapper:
         f"{WRAPPER_PATH}/bio/reference/ensembl-sequence"
 
@@ -88,8 +133,12 @@ rule bwa_index:
         f"resources/{REF_BUILD}/genome.fasta",
     output:
         multiext(
-            f"resources/{REF_BUILD}/genome", 
-            ".amb", ".ann", ".bwt", ".pac", ".sa"
+            f"resources/{REF_BUILD}/genome",
+            ".amb",
+            ".ann",
+            ".bwt",
+            ".pac",
+            ".sa",
         ),
     log:
         f"logs/genome/bwa_index.{REF_BUILD}.log",
@@ -123,8 +172,13 @@ rule bowtie2_index:
         ref=f"resources/{REF_BUILD}/genome.fasta",
     output:
         multiext(
-            f"resources/{REF_BUILD}/genome", 
-            ".1.bt2", ".2.bt2", ".3.bt2", ".4.bt2", ".rev.1.bt2", ".rev.2.bt2"
+            f"resources/{REF_BUILD}/genome",
+            ".1.bt2",
+            ".2.bt2",
+            ".3.bt2",
+            ".4.bt2",
+            ".rev.1.bt2",
+            ".rev.2.bt2",
         ),
     log:
         f"logs/genome/{REF_BUILD}/bowtie2_index.{REF_BUILD}.log",
@@ -139,14 +193,13 @@ rule hisat2_index_extra:
         gtf=f"resources/{REF_BUILD}/genome.gtf",
     output:
         multiext(
-            f"resources/{REF_BUILD}/genome",
-            ".exons.bed", ".splice_sites.bed"
+            f"resources/{REF_BUILD}/genome", ".exons.bed", ".splice_sites.bed"
         ),
     log:
-        f"logs/genome/{REF_BUILD}/hisat2_index.features.log"
+        f"logs/genome/{REF_BUILD}/hisat2_index.features.log",
     conda:
         # relative path to this snakemake file
-        workflow.source_path("../envs/hisat2.yaml"),
+        workflow.source_path("../envs/hisat2.yaml")
     threads: 8
     # cache: True
     shell:
@@ -164,14 +217,20 @@ rule hisat2_index:
     output:
         multiext(
             f"resources/{REF_BUILD}/genome",
-            ".1.ht2", ".2.ht2", ".3.ht2", ".4.ht2",
-            ".5.ht2", ".6.ht2", ".7.ht2", ".8.ht2",
+            ".1.ht2",
+            ".2.ht2",
+            ".3.ht2",
+            ".4.ht2",
+            ".5.ht2",
+            ".6.ht2",
+            ".7.ht2",
+            ".8.ht2",
         ),
     params:
         prefix=f"resources/{REF_BUILD}/genome",
-        extra=lambda w, input: f"--exon {input.exons} --ss {input.splice_sites}"
+        extra=lambda w, input: f"--exon {input.exons} --ss {input.splice_sites}",
     log:
-        f"logs/genome/{REF_BUILD}/hisat2_index.log"
+        f"logs/genome/{REF_BUILD}/hisat2_index.log",
     threads: 8
     # cache: True
     wrapper:
@@ -184,7 +243,7 @@ rule kallisto_index:
     output:
         index=f"resources/{REF_BUILD}/kallisto_genome/transcriptome.idx",
     params:
-        extra=""
+        extra="",
     log:
         f"logs/genome/{REF_BUILD}/kallisto_index.{REF_BUILD}.log",
     threads: 8
@@ -203,7 +262,7 @@ rule salmon_decoys:
         decoys=f"resources/{REF_BUILD}/genome.decoys.txt",
     threads: 4
     log:
-        f"logs/genome/salmon_decoys.{REF_BUILD}.log"
+        f"logs/genome/salmon_decoys.{REF_BUILD}.log",
     cache: False
     wrapper:
         f"{WRAPPER_PATH}/bio/salmon/decoys"
@@ -214,12 +273,10 @@ rule salmon_index:
         sequences=f"resources/{REF_BUILD}/genome.transcriptome.fasta",
         decoys=f"resources/{REF_BUILD}/genome.decoys.txt",
     output:
-        directory(f"resources/{REF_BUILD}/salmon_genome")
-    threads: 8 
+        directory(f"resources/{REF_BUILD}/salmon_genome"),
+    threads: 8
     log:
         f"logs/genome/{REF_BUILD}/salmon_index.{REF_BUILD}.log",
     cache: True
     wrapper:
         f"{WRAPPER_PATH}/bio/salmon/index"
-
-

@@ -1,16 +1,24 @@
+# test files
 .test/benchmarks/**
 .test/logs/**
 .test/results/**
 .test/resources/**
 .test/.snakemake/**
+
+# Log and temp files
 benchmarks/**
 logs/**
 resources/**
 results/**
+
+# snakemake cache
 .snakemake/**
 .cache/**
 .conda/**
 .condarc
+
+# fastq files
 fastq/**
+fastq
 run.sh
 *.out

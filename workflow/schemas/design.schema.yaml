@@ -1,18 +1,40 @@
 $schema: "http://json-schema.org/draft-06/schema#"
 
 description: an entry in the RNAseq design
+
+type: object
+
 properties:
+  
+  ref:
+    type: object
+    properties:
+      release:
+        type: integer
+        description: release version of Ensembl, default 100
+      species:
+        type: string
+        description: name of species in Ensembl, such as homo_sapiens, see snpEff database for all available species
+      build:
+        type: string
+        description: build of the species, eg, GRCm38 for homo_sapiens
+    required:
+      - release
+      - species
+      - build
+
   wt:
-    type: list
+    type: array
     description: list of unique keywords for wildtype samples
   mut:
-    type: list
+    type: array
     description: list of unique keywords for mutant samples
   fq_dir:
     type: string
     description: path to the fastq files of the RNAseq 
 
 required:
+  - ref
   - wt
   - mut
   - fq_dir

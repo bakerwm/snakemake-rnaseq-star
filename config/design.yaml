@@ -1,8 +1,29 @@
 # design for RNAseq 
 # mut vs wt
 # choose unique keywords for each group
+ref:
+  # see `snpEff databases` for available species, from Ensembl
+  # common species:
+  # human: homo_sapiens, GRCh38
+  # mouse: mus_musculus, GRCm38
+  # fruitfly: drosophila_melanogaster, BDGP6.28
+  release: 100
+  species: mus_musculus
+  build: GRCm38
+
+## Experimental
+# ## specify the path to STAR_index, or download reference genome and build it
+# star_index: null
+# ## specify the path to Salmon_index, or download reference genome and build it
+# salmon_index: null
+# Be careful, make sure the keywords are unique for each group of wt/mut
+# the number of wt and mut MUST be identical
+
 wt: 
-  - dT1
+  - dT0.1
+  - dT0.5
 mut: 
+  - dT1
   - dT5
 fq_dir: fastq/raw_data
+# out_dir: results # default: ./results
